@@ -38,7 +38,7 @@ python3 demot/agentti_saa.py 0.2        # kokeile: "Sää Härmälässä viimeis
 `diat/demot.pptx` on demo-osion diasarja. Sen voi rakentaa uudelleen skriptillä:
 
 ```sh
-pip install python-pptx lxml
+pip install python-pptx lxml "qrcode[pil]"
 cd diat && python3 rakenna_diat.py
 ```
 

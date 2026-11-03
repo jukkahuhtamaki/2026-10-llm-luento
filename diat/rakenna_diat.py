@@ -2,7 +2,9 @@
 # Rakentaa demo-osion diat: python rakenna_diat.py  ->  demot.pptx
 
 import copy
+import io
 
+import qrcode
 from lxml import etree
 from pptx import Presentation
 from pptx.chart.data import CategoryChartData
@@ -583,7 +585,40 @@ muistiinpanot(dia,
     "Tämä ratkaisee sokkotestin toisen kysymyksen. Härmälässä on Ilmatieteen laitoksen havaintoasema (Tampere Härmälä).\n"
     "Malli ei itse hae mitään. Se pyytää ohjelmaa ajamaan työkalun, ja ohjelma palauttaa tuloksen viestilistaan.")
 
-# 13. Paljastus (piilotettu)
+# 13. Repositorio
+REPO = "https://github.com/jukkahuhtamaki/2026-10-llm-luento"
+dia = otsikkodia("Kokeile itse")
+linkki = pilleri(dia, REUNA, 1.85, 7.9, 0.8, REPO.removeprefix("https://"), T.BACKGROUND_2,
+                 koko=20, lihava=False, fontti=KOODIFONTTI, nimi="Linkki")
+linkki.text_frame.paragraphs[0].runs[0].hyperlink.address = REPO
+teksti(dia, REUNA, 3.0, 7.9, 0.4, "REPOSITORIOSSA", koko=14, lihava=True, vari_=T.TEXT_2)
+sisalto = [
+    ("turing.py", "sokkotesti kielimalleilla"),
+    ("agentti.py", "pieni agentti, 30 riviä"),
+    ("agentti_saa.py", "agentti ja säätyökalu"),
+    ("demot.pptx", "nämä diat"),
+]
+for i, (tiedosto, kuvaus) in enumerate(sisalto):
+    y = 3.5 + i * 0.7
+    pilleri(dia, REUNA, y, 2.6, 0.5, tiedosto, T.ACCENT_5, T.TEXT_1, koko=14,
+            lihava=False, fontti=KOODIFONTTI, nimi=f"Tiedosto {tiedosto}")
+    teksti(dia, REUNA + 2.9, y, 4.9, 0.5, kuvaus, koko=18, ankkuri=MSO_ANCHOR.MIDDLE)
+teksti(dia, REUNA, 6.4, 7.9, 0.4, "Tarvitset Pythonin ja Ollaman. Ohjeet ovat README-tiedostossa.",
+       koko=14, vari_=T.TEXT_2)
+
+qr = qrcode.QRCode(border=2, box_size=20)
+qr.add_data(REPO)
+kuva = io.BytesIO()
+qr.make_image(fill_color="#" + TEEMA["dk1"], back_color="white").save(kuva, format="PNG")
+kuva.seek(0)
+kortti(dia, 9.05, 1.85, 3.65, 4.1, T.BACKGROUND_2, nimi="QR-tausta")
+qrkuva = dia.shapes.add_picture(kuva, Inches(9.3), Inches(2.05), Inches(3.15), Inches(3.15))
+qrkuva.name = "QR-koodi"
+teksti(dia, 9.05, 5.35, 3.65, 0.4, "Skannaa puhelimella", koko=14, vari_=T.TEXT_2,
+       tasaus=PP_ALIGN.CENTER)
+muistiinpanot(dia, f"Repositorio: {REPO}\nKoodi ja diat MIT-lisenssillä.")
+
+# 14. Paljastus (piilotettu)
 dia = prs.slides.add_slide(TYHJA)
 tumma(dia)
 teksti(dia, REUNA, 1.6, 12, 0.5, "PALJASTUS", koko=18, lihava=True, vari_=T.ACCENT_3)
